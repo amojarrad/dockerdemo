@@ -1,0 +1,49 @@
+# Adopt version 2 syntax:
+#   https://docs.docker.com/compose/compose-file/#/versioning
+version: '2'
+
+volumes:
+    database_data5:
+        driver: local
+
+services:
+    
+###########################
+# Setup the Drupal container
+###########################
+    web1:
+        container_name: "drupal5"
+        build: ./docker/drupal/
+        depends_on:
+            - db1
+        environment:
+            DRUPAL_PROFILE: standard
+            DRUPAL_SITE_NAME: Drupal
+            DRUPAL_USER: admin
+            DRUPAL_PASS: admin
+        ports:
+            - 8090:80
+
+        volumes:
+            - ./sites:/var/www/html/sites     
+            - ./data/docroot/themes:/var/www/html/themes     
+            - ./data/docroot/modules:/var/www/html/modules    
+            - ./data/docroot/libraries:/var/www/html/libraries        
+        restart: always
+        
+###########################
+# Setup the Database (MySQL) container
+###########################
+    db1:
+        container_name: "mysql5"
+        build: ./docker/mysql
+        expose:
+            - 3306
+        volumes:
+            - database_data5:/var/lib/mysql
+            - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: light
+            MYSQL_USER: drupal
+            MYSQL_PASSWORD: drupal
