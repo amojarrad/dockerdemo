@@ -25,7 +25,7 @@ services:
             - 8090:80
 
         volumes:
-            - ./sites:/var/www/html/sites     
+            - ./data/docroot/sites:/var/www/html/sites     
             - ./data/docroot/themes:/var/www/html/themes     
             - ./data/docroot/modules:/var/www/html/modules    
             - ./data/docroot/libraries:/var/www/html/libraries        
